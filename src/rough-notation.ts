@@ -1,4 +1,4 @@
-import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS } from './model.js';
+import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model.js';
 import { renderAnnotation } from './render.js';
 import { ensureKeyframes } from './keyframes.js';
 
@@ -12,11 +12,16 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _resizing = false;
   private _resizeObserver?: any; // ResizeObserver is not supported in typescript std lib yet
   private _lastSize?: Rect;
+  _animationGroupDelay = 0;
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig) {
     this._e = e;
     this._config = config;
     this.attach();
+  }
+
+  get config(): RoughAnnotationConfig {
+    return this._config;
   }
 
   private _resizeListener = () => {
@@ -151,7 +156,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private render(svg: SVGSVGElement) {
     const rect = this.computeSize();
     if (rect) {
-      renderAnnotation(svg, rect, this._config);
+      renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
       this._lastSize = rect;
       this._state = 'showing';
     }
@@ -179,4 +184,27 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
 export function annotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotation {
   return new RoughAnnotationImpl(element, config);
+}
+
+export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotationGroup {
+  let delay = 0;
+  for (const a of annotations) {
+    const ai = a as RoughAnnotationImpl;
+    ai._animationGroupDelay = delay;
+    const duration = ai.config.animationDuration === 0 ? 0 : (ai.config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    delay += duration;
+  }
+  const list = [...annotations];
+  return {
+    show() {
+      for (const a of list) {
+        a.show();
+      }
+    },
+    hide() {
+      for (const a of list) {
+        a.hide();
+      }
+    }
+  }
 }

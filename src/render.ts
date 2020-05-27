@@ -1,4 +1,4 @@
-import { Rect, RoughAnnotationConfig, SVG_NS } from './model.js';
+import { Rect, RoughAnnotationConfig, SVG_NS, DEFAULT_ANIMATION_DURATION } from './model.js';
 import { ResolvedOptions, OpSet } from 'roughjs/bin/core';
 import { line, rectangle, ellipse } from 'roughjs/bin/renderer';
 
@@ -29,7 +29,7 @@ const highlightOptions = JSON.parse(JSON.stringify(defaultOptions));
 highlightOptions.roughness = 3;
 highlightOptions.disableMultiStroke = true;
 
-export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig) {
+export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number) {
   const opList: OpSet[] = [];
   let strokeWidth = config.strokeWidth || 2;
   const padding = (config.padding === 0) ? 0 : (config.padding || 5);
@@ -91,8 +91,8 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     const lengths: number[] = [];
     const pathElements: SVGPathElement[] = [];
     let totalLength = 0;
-    const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || 1000);
-    const initialDelay = config.animationDelay === 0 ? 0 : (config.animationDelay || 0);
+    const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    const initialDelay = (config.animationDelay === 0 ? 0 : (config.animationDelay || 0)) + (animationGroupDelay || 0);
 
     for (const d of pathStrings) {
       const path = document.createElementNS(SVG_NS, 'path');
