@@ -1,6 +1,6 @@
 {
   "name": "rough-notation",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Annotate html",
   "main": "lib/rough-notation.cjs.js",
   "module": "lib/rough-notation.esm.js",
