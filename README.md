@@ -102,7 +102,7 @@ When you call the `annotate` function, you get back an annotation object, which 
 Returns if the annotation is showing
 
 #### show()
-Drawns the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
+Draws the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
 
 #### hide()
 Hides the annotation if showing. This is not animated. 
