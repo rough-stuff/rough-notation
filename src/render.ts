@@ -27,9 +27,10 @@ const singleStrokeOptions = JSON.parse(JSON.stringify(defaultOptions));
 singleStrokeOptions.disableMultiStroke = true;
 const highlightOptions = JSON.parse(JSON.stringify(defaultOptions));
 highlightOptions.roughness = 3;
+highlightOptions.disableMultiStroke = true;
 
 export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig) {
-  let ops: OpSet | null = null;
+  const opList: OpSet[] = [];
   let strokeWidth = config.strokeWidth || 2;
   const padding = (config.padding === 0) ? 0 : (config.padding || 5);
   const animate = (config.animate === undefined) ? true : (!!config.animate);
@@ -37,12 +38,14 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   switch (config.type) {
     case 'underline': {
       const y = rect.y + rect.h + padding;
-      ops = line(rect.x, y, rect.x + rect.w, y, defaultOptions);
+      opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+      opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
       break;
     }
     case 'strike-through': {
       const y = rect.y + (rect.h / 2);
-      ops = line(rect.x, y, rect.x + rect.w, y, defaultOptions);
+      opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+      opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
       break;
     }
     case 'box': {
@@ -50,9 +53,8 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const y = rect.y - padding;
       const width = rect.w + (2 * padding);
       const height = rect.h + (2 * padding);
-      ops = rectangle(x, y, width, height, singleStrokeOptions);
-      const ops2 = rectangle(x, y, width, height, singleStrokeOptions);
-      ops.ops = [...ops.ops, ...ops2.ops];
+      opList.push(rectangle(x, y, width, height, singleStrokeOptions));
+      opList.push(rectangle(x, y, width, height, singleStrokeOptions));
       break;
     }
     case 'crossed-off': {
@@ -60,9 +62,10 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const y = rect.y;
       const x2 = x + rect.w;
       const y2 = y + rect.h;
-      ops = line(x, y, x2, y2, defaultOptions);
-      const ops2 = line(x2, y, x, y2, defaultOptions);
-      ops.ops = [...ops.ops, ...ops2.ops];
+      opList.push(line(x, y, x2, y2, singleStrokeOptions));
+      opList.push(line(x2, y2, x, y, singleStrokeOptions));
+      opList.push(line(x2, y, x, y2, singleStrokeOptions));
+      opList.push(line(x, y2, x2, y, singleStrokeOptions));
       break;
     }
     case 'circle': {
@@ -71,23 +74,24 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const height = rect.h + (2 * p2);
       const x = rect.x - p2 + (width / 2);
       const y = rect.y - p2 + (height / 2);
-      ops = ellipse(x, y, width, height, defaultOptions);
+      opList.push(ellipse(x, y, width, height, defaultOptions));
       break;
     }
     case 'highlight': {
       strokeWidth = rect.h * 0.95;
       const y = rect.y + (rect.h / 2);
-      ops = line(rect.x, y, rect.x + rect.w, y, highlightOptions);
+      opList.push(line(rect.x, y, rect.x + rect.w, y, highlightOptions));
+      opList.push(line(rect.x + rect.w, y, rect.x, y, highlightOptions));
       break;
     }
   }
 
-  if (ops) {
-    const pathStrings = opsToPath(ops);
+  if (opList.length) {
+    const pathStrings = opsToPath(opList);
     const lengths: number[] = [];
     const pathElements: SVGPathElement[] = [];
     let totalLength = 0;
-    const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || 500);
+    const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || 1000);
     const initialDelay = config.animationDelay === 0 ? 0 : (config.animationDelay || 0);
 
     for (const d of pathStrings) {
@@ -122,28 +126,30 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   }
 }
 
-function opsToPath(drawing: OpSet): string[] {
+function opsToPath(opList: OpSet[]): string[] {
   const paths: string[] = [];
-  let path = '';
-  for (const item of drawing.ops) {
-    const data = item.data;
-    switch (item.op) {
-      case 'move':
-        if (path.trim()) {
-          paths.push(path.trim());
-        }
-        path = `M${data[0]} ${data[1]} `;
-        break;
-      case 'bcurveTo':
-        path += `C${data[0]} ${data[1]}, ${data[2]} ${data[3]}, ${data[4]} ${data[5]} `;
-        break;
-      case 'lineTo':
-        path += `L${data[0]} ${data[1]} `;
-        break;
+  for (const drawing of opList) {
+    let path = '';
+    for (const item of drawing.ops) {
+      const data = item.data;
+      switch (item.op) {
+        case 'move':
+          if (path.trim()) {
+            paths.push(path.trim());
+          }
+          path = `M${data[0]} ${data[1]} `;
+          break;
+        case 'bcurveTo':
+          path += `C${data[0]} ${data[1]}, ${data[2]} ${data[3]}, ${data[4]} ${data[5]} `;
+          break;
+        case 'lineTo':
+          path += `L${data[0]} ${data[1]} `;
+          break;
+      }
     }
-  }
-  if (path.trim()) {
-    paths.push(path.trim());
+    if (path.trim()) {
+      paths.push(path.trim());
+    }
   }
   return paths;
 }
