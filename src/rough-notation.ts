@@ -206,5 +206,5 @@ export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotation
         a.hide();
       }
     }
-  }
+  };
 }

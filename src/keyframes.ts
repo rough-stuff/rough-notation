@@ -8,7 +8,6 @@ export function ensureKeyframes() {
       }
     }
     `;
-    console.log('keyframe added');
     document.head.appendChild(style);
   }
 }

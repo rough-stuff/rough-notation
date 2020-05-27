@@ -2,8 +2,13 @@
   "name": "rough-notation",
   "version": "0.0.1",
   "description": "Annotate html",
-  "main": "index.js",
+  "main": "lib/rough-notation.cjs.js",
+  "module": "lib/rough-notation.esm.js",
+  "browser": "lib/rough-notation.iife.js",
+  "types": "lib/rough-notation.d.ts",
   "scripts": {
+    "build": "rm -rf lib && tsc && rollup -c",
+    "lint": "tslint -p tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +27,10 @@
   },
   "homepage": "https://github.com/pshihn/rough-notation#readme",
   "devDependencies": {
+    "rollup": "^2.10.9",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^6.1.0",
+    "tslint": "^6.1.2",
     "typescript": "^3.9.3"
   },
   "dependencies": {
