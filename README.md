@@ -2,7 +2,7 @@
 
 # Rough Notation
 
-A small JavaScript library to create and animate annotations on a web page
+A small JavaScript library to create and animate annotations on a web page.
 
 Rough Notation uses [RoughJS](https://roughjs.com) to create a hand-drawn look and feel. Elements can be annotated in a number of different styles. Animation duration and delay can be configured, or just turned off.
 
@@ -38,7 +38,7 @@ Once you have the annotation object, you can call `show()` or `hide()` on it to 
 ```javascript
 import { annotate } from 'rough-notation';
 
-const e = document.quereySelector('#myElement');
+const e = document.querySelector('#myElement');
 const annotation = annotate(e, { type: 'underline' });
 annotation.show();
 ```
@@ -50,9 +50,9 @@ rough-notation provides a way to order the animation of annotations by creating 
 ```javascript
 import { annotate, annotationGroup } from 'rough-notation';
 
-const a1 = annotate(document.quereySelector('#e1'), { type: 'underline' });
-const a2 = annotate(document.quereySelector('#e3'), { type: 'box' });
-const a3 = annotate(document.quereySelector('#e3'), { type: 'circle' });
+const a1 = annotate(document.querySelector('#e1'), { type: 'underline' });
+const a2 = annotate(document.querySelector('#e3'), { type: 'box' });
+const a3 = annotate(document.querySelector('#e3'), { type: 'circle' });
 
 const ag = annotationGroup([a3, a1, a2]);
 ag.show();
@@ -102,7 +102,7 @@ When you call the `annotate` function, you get back an annotation object, which 
 Returns if the annotation is showing
 
 #### show()
-Drawns the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
+Draws the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
 
 #### hide()
 Hides the annotation if showing. This is not animated. 
