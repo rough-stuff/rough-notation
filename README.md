@@ -60,17 +60,6 @@ ag.show();
 
 When you create an annotation object, you pass in a config. The config only has one mandatory field, which is the `type` of the annotation. But you can configure the annotation in many ways. 
 
-export interface RoughAnnotationConfig {
-  type: RoughAnnotationType;
-  animate?: boolean; // defaults to true
-  animationDuration?: number; // defaulst to 1000ms
-  animationDelay?: number; // default = 0
-  color?: string; // defaults to currentColor
-  strokeWidth?: number; // default based on type
-  padding?: number; // defaults to 5px
-}
-
-
 #### type
 This is a mandatory field. It sets the annotation style. Following are the list of supported annotation types:
 
@@ -103,4 +92,18 @@ Width of the annotation strokes. Default value is `1`.
 #### padding
 Padding between the element and roughly where the annotation is drawn. Default value is `5` (in pixels).
 
+## Annotation Object
 
+When you call the `annotate` function, you get back an annotation object, which has the following methods:
+
+#### isShowing(): boolean
+Returns if the annotation is showing
+
+#### show()
+Drawns the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
+
+#### hide()
+Hides the annotation if showing. This is not animated. 
+
+#### remove()
+Unlinks the annotation from the element. 
