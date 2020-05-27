@@ -1,3 +1,5 @@
+![Rough Notation logo](https://roughnotation.com/images/social.png)
+
 # Rough Notation
 
 A small JavaScript library to create and animate annotations on a web page
