@@ -38,7 +38,7 @@ Once you have the annotation object, you can call `show()` or `hide()` on it to 
 ```javascript
 import { annotate } from 'rough-notation';
 
-const e = document.quereySelector('#myElement');
+const e = document.querySelector('#myElement');
 const annotation = annotate(e, { type: 'underline' });
 annotation.show();
 ```
@@ -50,9 +50,9 @@ rough-notation provides a way to order the animation of annotations by creating 
 ```javascript
 import { annotate, annotationGroup } from 'rough-notation';
 
-const a1 = annotate(document.quereySelector('#e1'), { type: 'underline' });
-const a2 = annotate(document.quereySelector('#e3'), { type: 'box' });
-const a3 = annotate(document.quereySelector('#e3'), { type: 'circle' });
+const a1 = annotate(document.querySelector('#e1'), { type: 'underline' });
+const a2 = annotate(document.querySelector('#e3'), { type: 'box' });
+const a3 = annotate(document.querySelector('#e3'), { type: 'circle' });
 
 const ag = annotationGroup([a3, a1, a2]);
 ag.show();
