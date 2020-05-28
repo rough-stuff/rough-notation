@@ -4,7 +4,6 @@
   "description": "Annotate html",
   "main": "lib/rough-notation.cjs.js",
   "module": "lib/rough-notation.esm.js",
-  "browser": "lib/rough-notation.iife.js",
   "types": "lib/rough-notation.d.ts",
   "scripts": {
     "build": "rm -rf lib && tsc && rollup -c",
