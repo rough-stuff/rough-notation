@@ -2,10 +2,10 @@ import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGr
 import { renderAnnotation } from './render.js';
 import { ensureKeyframes } from './keyframes.js';
 
-type AnootationState = 'unattached' | 'not-showing' | 'showing';
+type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
 class RoughAnnotationImpl implements RoughAnnotation {
-  private _state: AnootationState = 'unattached';
+  private _state: AnnotationState = 'unattached';
   private _config: RoughAnnotationConfig;
   private _e: HTMLElement;
   private _svg?: SVGSVGElement;
