@@ -1,6 +1,6 @@
 {
   "name": "rough-notation",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Annotate html",
   "main": "lib/rough-notation.cjs.js",
   "module": "lib/rough-notation.esm.js",
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/pshihn/rough-notation#readme",
   "devDependencies": {
-    "rollup": "^2.11.0",
+    "rollup": "^2.11.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^6.1.0",
     "tslint": "^6.1.2",
