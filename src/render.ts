@@ -34,18 +34,29 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   let strokeWidth = config.strokeWidth || 2;
   const padding = (config.padding === 0) ? 0 : (config.padding || 5);
   const animate = (config.animate === undefined) ? true : (!!config.animate);
+  const iterations = config.iterations || 2;
 
   switch (config.type) {
     case 'underline': {
       const y = rect.y + rect.h + padding;
-      opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
-      opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+      for (let i = 0; i < iterations; i++) {
+        if (i % 2) {
+          opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+        } else {
+          opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+        }
+      }
       break;
     }
     case 'strike-through': {
       const y = rect.y + (rect.h / 2);
-      opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
-      opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+      for (let i = 0; i < iterations; i++) {
+        if (i % 2) {
+          opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+        } else {
+          opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+        }
+      }
       break;
     }
     case 'box': {
@@ -53,8 +64,9 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const y = rect.y - padding;
       const width = rect.w + (2 * padding);
       const height = rect.h + (2 * padding);
-      opList.push(rectangle(x, y, width, height, singleStrokeOptions));
-      opList.push(rectangle(x, y, width, height, singleStrokeOptions));
+      for (let i = 0; i < iterations; i++) {
+        opList.push(rectangle(x, y, width, height, singleStrokeOptions));
+      }
       break;
     }
     case 'crossed-off': {
@@ -62,10 +74,20 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const y = rect.y;
       const x2 = x + rect.w;
       const y2 = y + rect.h;
-      opList.push(line(x, y, x2, y2, singleStrokeOptions));
-      opList.push(line(x2, y2, x, y, singleStrokeOptions));
-      opList.push(line(x2, y, x, y2, singleStrokeOptions));
-      opList.push(line(x, y2, x2, y, singleStrokeOptions));
+      for (let i = 0; i < iterations; i++) {
+        if (i % 2) {
+          opList.push(line(x2, y2, x, y, singleStrokeOptions));
+        } else {
+          opList.push(line(x, y, x2, y2, singleStrokeOptions));
+        }
+      }
+      for (let i = 0; i < iterations; i++) {
+        if (i % 2) {
+          opList.push(line(x, y2, x2, y, singleStrokeOptions));
+        } else {
+          opList.push(line(x2, y, x, y2, singleStrokeOptions));
+        }
+      }
       break;
     }
     case 'circle': {
@@ -74,14 +96,26 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const height = rect.h + (2 * p2);
       const x = rect.x - p2 + (width / 2);
       const y = rect.y - p2 + (height / 2);
-      opList.push(ellipse(x, y, width, height, defaultOptions));
+      const fullItr = Math.floor(iterations / 2);
+      const singleItr = iterations - (fullItr * 2);
+      for (let i = 0; i < fullItr; i++) {
+        opList.push(ellipse(x, y, width, height, defaultOptions));
+      }
+      for (let i = 0; i < singleItr; i++) {
+        opList.push(ellipse(x, y, width, height, singleStrokeOptions));
+      }
       break;
     }
     case 'highlight': {
       strokeWidth = rect.h * 0.95;
       const y = rect.y + (rect.h / 2);
-      opList.push(line(rect.x, y, rect.x + rect.w, y, highlightOptions));
-      opList.push(line(rect.x + rect.w, y, rect.x, y, highlightOptions));
+      for (let i = 0; i < iterations; i++) {
+        if (i % 2) {
+          opList.push(line(rect.x + rect.w, y, rect.x, y, highlightOptions));
+        } else {
+          opList.push(line(rect.x, y, rect.x + rect.w, y, highlightOptions));
+        }
+      }
       break;
     }
   }
