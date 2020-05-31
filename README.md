@@ -109,3 +109,12 @@ Hides the annotation if showing. This is not animated.
 
 #### remove()
 Unlinks the annotation from the element. 
+
+## Wrappers
+
+Rough Notation has wrappers for multiple libraries and frameworks:
+
+-   [React Rough Notation](https://github.com/linkstrifer/react-rough-notation)
+-   [Svelte Rough Notation](https://github.com/dimfeld/svelte-rough-notation)
+-   [Vue Rough Notation](https://github.com/Leecason/vue-rough-notation)
+-   [Web Component Rough Notation](https://github.com/Matsuuu/vanilla-rough-notation)
