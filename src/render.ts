@@ -1,4 +1,4 @@
-import { Rect, RoughAnnotationConfig, SVG_NS, DEFAULT_ANIMATION_DURATION } from './model';
+import { Rect, RoughAnnotationConfig, SVG_NS, DEFAULT_ANIMATION_DURATION } from './model.js';
 import { ResolvedOptions, OpSet } from 'roughjs/bin/core';
 import { line, rectangle, ellipse } from 'roughjs/bin/renderer';
 

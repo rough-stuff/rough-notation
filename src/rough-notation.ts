@@ -1,6 +1,6 @@
-import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model';
-import { renderAnnotation } from './render';
-import { ensureKeyframes } from './keyframes';
+import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model.js';
+import { renderAnnotation } from './render.js';
+import { ensureKeyframes } from './keyframes.js';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
