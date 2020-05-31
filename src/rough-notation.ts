@@ -4,8 +4,13 @@ import { ensureKeyframes } from './keyframes.js';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
+function defaultGetRect(element: HTMLElement) {
+  return () => element.getBoundingClientRect();
+}
+
 class RoughAnnotationImpl implements RoughAnnotation {
   private _state: AnnotationState = 'unattached';
+  private _getRect: () => DOMRect;
   private _config: RoughAnnotationConfig;
   private _e: HTMLElement;
   private _svg?: SVGSVGElement;
@@ -14,9 +19,10 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _lastSize?: Rect;
   _animationGroupDelay = 0;
 
-  constructor(e: HTMLElement, config: RoughAnnotationConfig) {
+  constructor(e: HTMLElement, config: RoughAnnotationConfig, getRect: () => DOMRect = defaultGetRect(e)) {
     this._e = e;
     this._config = config;
+    this._getRect = getRect;
     this.attach();
   }
 
@@ -163,7 +169,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private computeSize(): Rect | null {
-    return this.computeSizeWithBounds(this._config.getRect ? this._config.getRect() : this._e.getBoundingClientRect());
+    return this.computeSizeWithBounds(this._getRect());
   }
 
   private computeSizeWithBounds(bounds: DOMRect | DOMRectReadOnly): Rect | null {
@@ -191,7 +197,7 @@ export function multiAnnotate(element: HTMLElement, config: RoughAnnotationConfi
   const elements = [];
   let clientRects = element.getClientRects();
   for (let i = 0; i < clientRects.length; ++i) {
-    const annotation = new RoughAnnotationImpl(element, { ...config, getRect: () => clientRects.item(i)! });
+    const annotation = new RoughAnnotationImpl(element, config, () => clientRects.item(i)!);
     elements.push(annotation);
   }
   return annotationGroup(elements);
