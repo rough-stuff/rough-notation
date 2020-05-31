@@ -154,17 +154,37 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private render(svg: SVGSVGElement) {
-    const rect = this.computeSize();
-    if (rect) {
-      renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
-      this._lastSize = rect;
-      this._state = 'showing';
+    if (this._config.multiline) {
+      const rects = this.computeSizes();
+
+    } else {
+      const rect = this.computeSize();
+      if (rect) {
+        renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
+        this._lastSize = rect;
+        this._state = 'showing';
+      }
     }
   }
 
   private computeSize(): Rect | null {
-    return this.computeSizeWithBounds(this._e.getBoundingClientRect());
+    return this.computeSizeWithBounds(this._config.getRect ? this._config.getRect() : this._e.getBoundingClientRect());
   }
+
+  private computeSizes(): Rect[] | null {
+    if (!this._svg) {
+      return null;
+    }
+    let result = [];
+    const clientRects = this._e.getClientRects();
+    for (let i = 0; i < clientRects.length; ++i) {
+      const rect = clientRects.item(i)!;
+      result.push(this.computeSizeWithBounds(rect)!);
+    }
+
+    return result;
+  }
+
 
   private computeSizeWithBounds(bounds: DOMRect | DOMRectReadOnly): Rect | null {
     if (this._svg) {
@@ -185,6 +205,18 @@ class RoughAnnotationImpl implements RoughAnnotation {
 export function annotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotation {
   return new RoughAnnotationImpl(element, config);
 }
+
+
+export function multiAnnotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotationGroup {
+  const elements = [];
+  let clientRects = element.getClientRects();
+  for (let i = 0; i < clientRects.length; ++i) {
+    const annotation = new RoughAnnotationImpl(element, { ...config, getRect: () => clientRects.item(i)! });
+    elements.push(annotation);
+  }
+  return annotationGroup(elements);
+}
+
 
 export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotationGroup {
   let delay = 0;

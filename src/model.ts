@@ -20,6 +20,7 @@ export interface RoughAnnotationConfig {
   strokeWidth?: number; // default based on type
   padding?: number; // defaults to 5px
   iterations?: number; // defaults to 2
+  getRect?: () => DOMRect;
 }
 
 export interface RoughAnnotation {
