@@ -166,21 +166,6 @@ class RoughAnnotationImpl implements RoughAnnotation {
     return this.computeSizeWithBounds(this._config.getRect ? this._config.getRect() : this._e.getBoundingClientRect());
   }
 
-  private computeSizes(): Rect[] | null {
-    if (!this._svg) {
-      return null;
-    }
-    let result = [];
-    const clientRects = this._e.getClientRects();
-    for (let i = 0; i < clientRects.length; ++i) {
-      const rect = clientRects.item(i)!;
-      result.push(this.computeSizeWithBounds(rect)!);
-    }
-
-    return result;
-  }
-
-
   private computeSizeWithBounds(bounds: DOMRect | DOMRectReadOnly): Rect | null {
     if (this._svg) {
       const rect1 = this._svg.getBoundingClientRect();
