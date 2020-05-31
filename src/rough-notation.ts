@@ -1,6 +1,6 @@
-import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model.js';
-import { renderAnnotation } from './render.js';
-import { ensureKeyframes } from './keyframes.js';
+import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model';
+import { renderAnnotation } from './render';
+import { ensureKeyframes } from './keyframes';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
@@ -154,16 +154,11 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private render(svg: SVGSVGElement) {
-    if (this._config.multiline) {
-      const rects = this.computeSizes();
-
-    } else {
-      const rect = this.computeSize();
-      if (rect) {
-        renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
-        this._lastSize = rect;
-        this._state = 'showing';
-      }
+    const rect = this.computeSize();
+    if (rect) {
+      renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
+      this._lastSize = rect;
+      this._state = 'showing';
     }
   }
 
