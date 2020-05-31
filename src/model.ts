@@ -19,6 +19,7 @@ export interface RoughAnnotationConfig {
   color?: string; // defaults to currentColor
   strokeWidth?: number; // default based on type
   padding?: number; // defaults to 5px
+  iterations?: number; // defaults to 2
 }
 
 export interface RoughAnnotation {
