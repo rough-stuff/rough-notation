@@ -120,3 +120,11 @@ Draws all the annotations in order. If the annotation is set to animate (default
 #### hide()
 Hides all the annotations if showing. This is not animated.
 
+## Wrappers
+
+Rough Notation has wrappers for multiple libraries and frameworks:
+
+-   [React Rough Notation](https://github.com/linkstrifer/react-rough-notation)
+-   [Svelte Rough Notation](https://github.com/dimfeld/svelte-rough-notation)
+-   [Vue Rough Notation](https://github.com/Leecason/vue-rough-notation)
+-   [Web Component Rough Notation](https://github.com/Matsuuu/vanilla-rough-notation)
