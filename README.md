@@ -109,3 +109,14 @@ Hides the annotation if showing. This is not animated.
 
 #### remove()
 Unlinks the annotation from the element. 
+
+## Annotation Group Object
+
+When you call the `annotationGroup` function, you get back an annotation group object, which has the following methods:
+
+#### show()
+Draws all the annotations in order. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation.
+
+#### hide()
+Hides all the annotations if showing. This is not animated.
+
