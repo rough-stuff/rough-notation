@@ -1,7 +1,7 @@
 {
   "name": "rough-notation",
-  "version": "0.2.0",
-  "description": "Annotate html",
+  "version": "0.2.1",
+  "description": "Create and animate hand-drawn annotations on a web page",
   "main": "lib/rough-notation.cjs.js",
   "module": "lib/rough-notation.esm.js",
   "types": "lib/rough-notation.d.ts",
@@ -26,13 +26,11 @@
   },
   "homepage": "https://github.com/pshihn/rough-notation#readme",
   "devDependencies": {
-    "rollup": "^2.11.2",
+    "rollup": "^2.12.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-terser": "^6.1.0",
+    "roughjs": "^4.3.1",
     "tslint": "^6.1.2",
     "typescript": "^3.9.3"
-  },
-  "dependencies": {
-    "roughjs": "^4.3.1"
   }
 }
