@@ -90,9 +90,9 @@ String value representing the color of the annotation sketch. Default value is `
 #### strokeWidth
 Width of the annotation strokes. Default value is `1`. 
 
-
 #### padding
 Padding between the element and roughly where the annotation is drawn. Default value is `5` (in pixels).
+If you wish to specify different `top`, `left`, `right`, `bottom` paddings, you can set the value to an array akin to CSS style padidng `[top, right, bottom, left]` or just `[top & bottom, left & right]`.
 
 ## Annotation Object
 
