@@ -124,12 +124,14 @@ class RoughAnnotationImpl implements RoughAnnotation {
         break;
       case 'showing':
         this.hide();
-        this.show();
+        if (this._svg) {
+          this.render(this._svg, true);
+        }
         break;
       case 'not-showing':
         this.attach();
         if (this._svg) {
-          this.render(this._svg);
+          this.render(this._svg, false);
         }
         break;
     }
@@ -153,10 +155,15 @@ class RoughAnnotationImpl implements RoughAnnotation {
     this.detachListeners();
   }
 
-  private render(svg: SVGSVGElement) {
+  private render(svg: SVGSVGElement, ensureNoAnimation: boolean) {
     const rect = this.computeSize();
     if (rect) {
-      renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
+      let config = this._config;
+      if (ensureNoAnimation) {
+        config = JSON.parse(JSON.stringify(this._config));
+        config.animate = false;
+      }
+      renderAnnotation(svg, rect, config, this._animationGroupDelay);
       this._lastSize = rect;
       this._state = 'showing';
     }
