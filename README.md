@@ -43,6 +43,8 @@ const annotation = annotate(e, { type: 'underline' });
 annotation.show();
 ```
 
+The annotation element will be created as a sibling to the element passed to the annotate, as such certain elements, like `<td>`, are not suitable for annotation. Create an inner `<span>` or `<div>` and annotate that instead.
+
 ## Annotation Group
 
 rough-notation provides a way to order the animation of annotations by creating an annotation-group. Pass the list of annotations to create a group. When show is called on the group, the annotations are animated in order.
