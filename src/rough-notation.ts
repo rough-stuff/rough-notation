@@ -1,6 +1,7 @@
 import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model.js';
 import { renderAnnotation } from './render.js';
 import { ensureKeyframes } from './keyframes.js';
+import { randomSeed } from 'roughjs/bin/math';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
@@ -12,6 +13,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _resizing = false;
   private _resizeObserver?: any; // ResizeObserver is not supported in typescript std lib yet
   private _lastSize?: Rect;
+  private _seed = randomSeed();
   _animationGroupDelay = 0;
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig) {
@@ -163,7 +165,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
         config = JSON.parse(JSON.stringify(this._config));
         config.animate = false;
       }
-      renderAnnotation(svg, rect, config, this._animationGroupDelay);
+      renderAnnotation(svg, rect, config, this._animationGroupDelay, this._seed);
       this._lastSize = rect;
       this._state = 'showing';
     }
