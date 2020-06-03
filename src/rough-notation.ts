@@ -22,8 +22,40 @@ class RoughAnnotationImpl implements RoughAnnotation {
     this.attach();
   }
 
-  get config(): RoughAnnotationConfig {
-    return this._config;
+  get animate() { return this._config.animate; }
+  set animate(value) { this._config.animate = value; }
+
+  get animationDuration() { return this._config.animationDuration; }
+  set animationDuration(value) { this._config.animationDuration = value; }
+
+  get animationDelay() { return this._config.animationDelay; }
+  set animationDelay(value) { this._config.animationDelay = value; }
+
+  get iterations() { return this._config.iterations; }
+  set iterations(value) { this._config.iterations = value; }
+
+  get color() { return this._config.color; }
+  set color(value) {
+    if (this._config.color !== value) {
+      this._config.color = value;
+      this.refresh();
+    }
+  }
+
+  get strokeWidth() { return this._config.strokeWidth; }
+  set strokeWidth(value) {
+    if (this._config.strokeWidth !== value) {
+      this._config.strokeWidth = value;
+      this.refresh();
+    }
+  }
+
+  get padding() { return this._config.padding; }
+  set padding(value) {
+    if (this._config.padding !== value) {
+      this._config.padding = value;
+      this.refresh();
+    }
   }
 
   private _resizeListener = () => {
@@ -120,6 +152,18 @@ class RoughAnnotationImpl implements RoughAnnotation {
     return (this._state !== 'not-showing');
   }
 
+  private pendingRefresh?: Promise<void>;
+  private refresh() {
+    if (this.isShowing() && (!this.pendingRefresh)) {
+      this.pendingRefresh = Promise.resolve().then(() => {
+        if (this.isShowing()) {
+          this.show();
+        }
+        delete this.pendingRefresh;
+      });
+    }
+  }
+
   show(): void {
     switch (this._state) {
       case 'unattached':
@@ -200,7 +244,7 @@ export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotation
   for (const a of annotations) {
     const ai = a as RoughAnnotationImpl;
     ai._animationGroupDelay = delay;
-    const duration = ai.config.animationDuration === 0 ? 0 : (ai.config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    const duration = ai.animationDuration === 0 ? 0 : (ai.animationDuration || DEFAULT_ANIMATION_DURATION);
     delay += duration;
   }
   const list = [...annotations];

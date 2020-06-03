@@ -13,8 +13,11 @@ export type RoughAnnotationType = 'underline' | 'box' | 'circle' | 'highlight' |
 export type FullPadding = [number, number, number, number];
 export type RoughPadding = number | [number, number] | FullPadding;
 
-export interface RoughAnnotationConfig {
+export interface RoughAnnotationConfig extends RoughAnnotationConfigBase {
   type: RoughAnnotationType;
+}
+
+export interface RoughAnnotationConfigBase {
   animate?: boolean; // defaults to true
   animationDuration?: number; // defaulst to 1000ms
   animationDelay?: number; // default = 0
@@ -24,7 +27,7 @@ export interface RoughAnnotationConfig {
   iterations?: number; // defaults to 2
 }
 
-export interface RoughAnnotation {
+export interface RoughAnnotation extends RoughAnnotationConfigBase {
   isShowing(): boolean;
   show(): void;
   hide(): void;
