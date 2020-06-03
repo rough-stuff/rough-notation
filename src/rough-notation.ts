@@ -11,7 +11,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _e: HTMLElement;
   private _svg?: SVGSVGElement;
   private _resizing = false;
-  private _resizeObserver?: any; // ResizeObserver is not supported in typescript std lib yet
+  private _ro?: any; // ResizeObserver is not supported in typescript std lib yet
   private _lastSize?: Rect;
   private _seed = randomSeed();
   _animationGroupDelay = 0;
@@ -64,7 +64,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
       setTimeout(() => {
         this._resizing = false;
         if (this._state === 'showing') {
-          const newSize = this.computeSize();
+          const newSize = this.size();
           if (newSize && this.hasRectChanged(newSize)) {
             this.show();
           }
@@ -103,20 +103,20 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   private detachListeners() {
     window.removeEventListener('resize', this._resizeListener);
-    if (this._resizeObserver) {
-      this._resizeObserver.unobserve(this._e);
+    if (this._ro) {
+      this._ro.unobserve(this._e);
     }
   }
 
   private attachListeners() {
     this.detachListeners();
     window.addEventListener('resize', this._resizeListener, { passive: true });
-    if ((!this._resizeObserver) && ('ResizeObserver' in window)) {
-      this._resizeObserver = new (window as any).ResizeObserver((entries: any) => {
+    if ((!this._ro) && ('ResizeObserver' in window)) {
+      this._ro = new (window as any).ResizeObserver((entries: any) => {
         for (const entry of entries) {
           let trigger = true;
           if (entry.contentRect) {
-            const newRect = this.computeSizeWithBounds(entry.contentRect);
+            const newRect = this.sizeFor(entry.contentRect);
             if (newRect && (!this.hasRectChanged(newRect))) {
               trigger = false;
             }
@@ -127,8 +127,8 @@ class RoughAnnotationImpl implements RoughAnnotation {
         }
       });
     }
-    if (this._resizeObserver) {
-      this._resizeObserver.observe(this._e);
+    if (this._ro) {
+      this._ro.observe(this._e);
     }
   }
 
@@ -202,7 +202,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private render(svg: SVGSVGElement, ensureNoAnimation: boolean) {
-    const rect = this.computeSize();
+    const rect = this.size();
     if (rect) {
       let config = this._config;
       if (ensureNoAnimation) {
@@ -215,11 +215,11 @@ class RoughAnnotationImpl implements RoughAnnotation {
     }
   }
 
-  private computeSize(): Rect | null {
-    return this.computeSizeWithBounds(this._e.getBoundingClientRect());
+  private size(): Rect | null {
+    return this.sizeFor(this._e.getBoundingClientRect());
   }
 
-  private computeSizeWithBounds(bounds: DOMRect | DOMRectReadOnly): Rect | null {
+  private sizeFor(bounds: DOMRect | DOMRectReadOnly): Rect | null {
     if (this._svg) {
       const rect1 = this._svg.getBoundingClientRect();
       const rect2 = bounds;
