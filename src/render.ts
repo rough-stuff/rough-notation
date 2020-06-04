@@ -23,11 +23,23 @@ const defaultOptions: ResolvedOptions = {
   disableMultiStroke: false,
   disableMultiStrokeFill: false
 };
-const singleStrokeOptions = JSON.parse(JSON.stringify(defaultOptions));
-singleStrokeOptions.disableMultiStroke = true;
-const highlightOptions = JSON.parse(JSON.stringify(defaultOptions));
-highlightOptions.roughness = 3;
-highlightOptions.disableMultiStroke = true;
+
+type RoughOptionsType = 'highlight' | 'single' | 'double';
+
+function getOptions(type: RoughOptionsType, seed: number): ResolvedOptions {
+  const o = JSON.parse(JSON.stringify(defaultOptions)) as ResolvedOptions;
+  switch (type) {
+    case 'highlight':
+      o.roughness = 3;
+      o.disableMultiStroke = true;
+      break;
+    case 'single':
+      o.disableMultiStroke = true;
+      break;
+  }
+  o.seed = seed;
+  return o;
+}
 
 function parsePadding(config: RoughAnnotationConfig): FullPadding {
   const p = config.padding;
@@ -55,7 +67,7 @@ function parsePadding(config: RoughAnnotationConfig): FullPadding {
   return [5, 5, 5, 5];
 }
 
-export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number) {
+export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number, seed: number) {
   const opList: OpSet[] = [];
   let strokeWidth = config.strokeWidth || 2;
   const padding = parsePadding(config);
@@ -64,59 +76,65 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
 
   switch (config.type) {
     case 'underline': {
+      const o = getOptions('single', seed);
       const y = rect.y + rect.h + padding[2];
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
-          opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+          opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
-          opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+          opList.push(line(rect.x, y, rect.x + rect.w, y, o));
         }
       }
       break;
     }
     case 'strike-through': {
+      const o = getOptions('single', seed);
       const y = rect.y + (rect.h / 2);
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
-          opList.push(line(rect.x + rect.w, y, rect.x, y, singleStrokeOptions));
+          opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
-          opList.push(line(rect.x, y, rect.x + rect.w, y, singleStrokeOptions));
+          opList.push(line(rect.x, y, rect.x + rect.w, y, o));
         }
       }
       break;
     }
     case 'box': {
+      const o = getOptions('single', seed);
       const x = rect.x - padding[3];
       const y = rect.y - padding[0];
       const width = rect.w + (padding[1] + padding[3]);
       const height = rect.h + (padding[0] + padding[2]);
       for (let i = 0; i < iterations; i++) {
-        opList.push(rectangle(x, y, width, height, singleStrokeOptions));
+        opList.push(rectangle(x, y, width, height, o));
       }
       break;
     }
     case 'crossed-off': {
+      const o = getOptions('single', seed);
       const x = rect.x;
       const y = rect.y;
       const x2 = x + rect.w;
       const y2 = y + rect.h;
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
-          opList.push(line(x2, y2, x, y, singleStrokeOptions));
+          opList.push(line(x2, y2, x, y, o));
         } else {
-          opList.push(line(x, y, x2, y2, singleStrokeOptions));
+          opList.push(line(x, y, x2, y2, o));
         }
       }
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
-          opList.push(line(x, y2, x2, y, singleStrokeOptions));
+          opList.push(line(x, y2, x2, y, o));
         } else {
-          opList.push(line(x2, y, x, y2, singleStrokeOptions));
+          opList.push(line(x2, y, x, y2, o));
         }
       }
       break;
     }
     case 'circle': {
+      const singleO = getOptions('single', seed);
+      const doubleO = getOptions('double', seed);
       const width = rect.w + (padding[1] + padding[3]);
       const height = rect.h + (padding[0] + padding[2]);
       const x = rect.x - padding[3] + (width / 2);
@@ -124,21 +142,22 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const fullItr = Math.floor(iterations / 2);
       const singleItr = iterations - (fullItr * 2);
       for (let i = 0; i < fullItr; i++) {
-        opList.push(ellipse(x, y, width, height, defaultOptions));
+        opList.push(ellipse(x, y, width, height, doubleO));
       }
       for (let i = 0; i < singleItr; i++) {
-        opList.push(ellipse(x, y, width, height, singleStrokeOptions));
+        opList.push(ellipse(x, y, width, height, singleO));
       }
       break;
     }
     case 'highlight': {
+      const o = getOptions('highlight', seed);
       strokeWidth = rect.h * 0.95;
       const y = rect.y + (rect.h / 2);
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
-          opList.push(line(rect.x + rect.w, y, rect.x, y, highlightOptions));
+          opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
-          opList.push(line(rect.x, y, rect.x + rect.w, y, highlightOptions));
+          opList.push(line(rect.x, y, rect.x + rect.w, y, o));
         }
       }
       break;
