@@ -1,6 +1,7 @@
 import { Rect, RoughAnnotationConfig, RoughAnnotation, SVG_NS, RoughAnnotationGroup, DEFAULT_ANIMATION_DURATION } from './model.js';
 import { renderAnnotation } from './render.js';
 import { ensureKeyframes } from './keyframes.js';
+import { randomSeed } from 'roughjs/bin/math';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
@@ -15,8 +16,9 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _e: HTMLElement;
   private _svg?: SVGSVGElement;
   private _resizing = false;
-  private _resizeObserver?: any; // ResizeObserver is not supported in typescript std lib yet
+  private _ro?: any; // ResizeObserver is not supported in typescript std lib yet
   private _lastSize?: Rect;
+  private _seed = randomSeed();
   _animationGroupDelay = 0;
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig, getRect: () => DOMRect = defaultGetRect(e)) {
@@ -26,8 +28,40 @@ class RoughAnnotationImpl implements RoughAnnotation {
     this.attach();
   }
 
-  get config(): RoughAnnotationConfig {
-    return this._config;
+  get animate() { return this._config.animate; }
+  set animate(value) { this._config.animate = value; }
+
+  get animationDuration() { return this._config.animationDuration; }
+  set animationDuration(value) { this._config.animationDuration = value; }
+
+  get animationDelay() { return this._config.animationDelay; }
+  set animationDelay(value) { this._config.animationDelay = value; }
+
+  get iterations() { return this._config.iterations; }
+  set iterations(value) { this._config.iterations = value; }
+
+  get color() { return this._config.color; }
+  set color(value) {
+    if (this._config.color !== value) {
+      this._config.color = value;
+      this.refresh();
+    }
+  }
+
+  get strokeWidth() { return this._config.strokeWidth; }
+  set strokeWidth(value) {
+    if (this._config.strokeWidth !== value) {
+      this._config.strokeWidth = value;
+      this.refresh();
+    }
+  }
+
+  get padding() { return this._config.padding; }
+  set padding(value) {
+    if (this._config.padding !== value) {
+      this._config.padding = value;
+      this.refresh();
+    }
   }
 
   private _resizeListener = () => {
@@ -36,7 +70,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
       setTimeout(() => {
         this._resizing = false;
         if (this._state === 'showing') {
-          const newSize = this.computeSize();
+          const newSize = this.size();
           if (newSize && this.hasRectChanged(newSize)) {
             this.show();
           }
@@ -49,6 +83,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
     if (this._state === 'unattached' && this._e.parentElement) {
       ensureKeyframes();
       const svg = this._svg = document.createElementNS(SVG_NS, 'svg');
+      svg.setAttribute('class', 'rough-annotation');
       const style = svg.style;
       style.position = 'absolute';
       style.top = '0';
@@ -75,20 +110,20 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   private detachListeners() {
     window.removeEventListener('resize', this._resizeListener);
-    if (this._resizeObserver) {
-      this._resizeObserver.unobserve(this._e);
+    if (this._ro) {
+      this._ro.unobserve(this._e);
     }
   }
 
   private attachListeners() {
     this.detachListeners();
     window.addEventListener('resize', this._resizeListener, { passive: true });
-    if ((!this._resizeObserver) && ('ResizeObserver' in window)) {
-      this._resizeObserver = new (window as any).ResizeObserver((entries: any) => {
+    if ((!this._ro) && ('ResizeObserver' in window)) {
+      this._ro = new (window as any).ResizeObserver((entries: any) => {
         for (const entry of entries) {
           let trigger = true;
           if (entry.contentRect) {
-            const newRect = this.computeSizeWithBounds(entry.contentRect);
+            const newRect = this.sizeFor(entry.contentRect);
             if (newRect && (!this.hasRectChanged(newRect))) {
               trigger = false;
             }
@@ -99,8 +134,8 @@ class RoughAnnotationImpl implements RoughAnnotation {
         }
       });
     }
-    if (this._resizeObserver) {
-      this._resizeObserver.observe(this._e);
+    if (this._ro) {
+      this._ro.observe(this._e);
     }
   }
 
@@ -124,18 +159,32 @@ class RoughAnnotationImpl implements RoughAnnotation {
     return (this._state !== 'not-showing');
   }
 
+  private pendingRefresh?: Promise<void>;
+  private refresh() {
+    if (this.isShowing() && (!this.pendingRefresh)) {
+      this.pendingRefresh = Promise.resolve().then(() => {
+        if (this.isShowing()) {
+          this.show();
+        }
+        delete this.pendingRefresh;
+      });
+    }
+  }
+
   show(): void {
     switch (this._state) {
       case 'unattached':
         break;
       case 'showing':
         this.hide();
-        this.show();
+        if (this._svg) {
+          this.render(this._svg, true);
+        }
         break;
       case 'not-showing':
         this.attach();
         if (this._svg) {
-          this.render(this._svg);
+          this.render(this._svg, false);
         }
         break;
     }
@@ -159,20 +208,25 @@ class RoughAnnotationImpl implements RoughAnnotation {
     this.detachListeners();
   }
 
-  private render(svg: SVGSVGElement) {
-    const rect = this.computeSize();
+  private render(svg: SVGSVGElement, ensureNoAnimation: boolean) {
+    const rect = this.size();
     if (rect) {
-      renderAnnotation(svg, rect, this._config, this._animationGroupDelay);
+      let config = this._config;
+      if (ensureNoAnimation) {
+        config = JSON.parse(JSON.stringify(this._config));
+        config.animate = false;
+      }
+      renderAnnotation(svg, rect, config, this._animationGroupDelay, this._seed);
       this._lastSize = rect;
       this._state = 'showing';
     }
   }
 
-  private computeSize(): Rect | null {
-    return this.computeSizeWithBounds(this._getRect());
+  private size(): Rect | null {
+    return this.sizeFor(this._getRect());      
   }
 
-  private computeSizeWithBounds(bounds: DOMRect | DOMRectReadOnly): Rect | null {
+  private sizeFor(bounds: DOMRect | DOMRectReadOnly): Rect | null {
     if (this._svg) {
       const rect1 = this._svg.getBoundingClientRect();
       const rect2 = bounds;
@@ -209,7 +263,7 @@ export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotation
   for (const a of annotations) {
     const ai = a as RoughAnnotationImpl;
     ai._animationGroupDelay = delay;
-    const duration = ai.config.animationDuration === 0 ? 0 : (ai.config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    const duration = ai.animationDuration === 0 ? 0 : (ai.animationDuration || DEFAULT_ANIMATION_DURATION);
     delay += duration;
   }
   const list = [...annotations];
