@@ -6,7 +6,7 @@ A small JavaScript library to create and animate annotations on a web page.
 
 Rough Notation uses [RoughJS](https://roughjs.com) to create a hand-drawn look and feel. Elements can be annotated in a number of different styles. Animation duration and delay can be configured, or just turned off.
 
-Rough Notation is about 3.3kb in size when gzipped.
+Rough Notation is about 3.63kb in size when gzipped.
 
 [Visit website to see it in action](https://roughnotation.com/) and check out the [source code](https://github.com/pshihn/rough-notation-web) for the website
 
@@ -33,7 +33,7 @@ Or load the IIFE version which created a `RoughNotation` object in your scope.
 ## Usage
 
 Create an `annotation` object by passing the element to annotate, and a config to describe the annotation style. 
-Once you have the annotation object, you can call `show()` or `hide()` on it to show the annotation
+Once you have the annotation object, you can call `show()` on it to show the annotation
 
 ```javascript
 import { annotate } from 'rough-notation';
@@ -43,7 +43,7 @@ const annotation = annotate(e, { type: 'underline' });
 annotation.show();
 ```
 
-The annotation element will be created as a sibling to the element passed to the annotate, as such certain elements, like `<td>`, are not suitable for annotation. Create an inner `<span>` or `<div>` and annotate that instead.
+*Note: This will add an SVG element as a sibling to the element, which may be troublesome in certain situations like in a `<table>`. You may want to create an inner `<span>` or `<div>` for the content to annotate.*
 
 ## Annotation Group
 
@@ -77,7 +77,6 @@ This is a mandatory field. It sets the annotation style. Following are the list 
 #### animate
 Boolean property to turn on/off animation when annotating. Default value is `true`.
 
-
 #### animationDuration
 Duration of the animation in milliseconds. Default is `800ms`.
 
@@ -96,6 +95,9 @@ Width of the annotation strokes. Default value is `1`.
 Padding between the element and roughly where the annotation is drawn. Default value is `5` (in pixels).
 If you wish to specify different `top`, `left`, `right`, `bottom` paddings, you can set the value to an array akin to CSS style padidng `[top, right, bottom, left]` or just `[top & bottom, left & right]`.
 
+#### iterations
+By default annotations are drawn in two iterations, e.g. when underlining, drawing from left to right and then back from right to left. Setting this property can let you configure the number of iterations. 
+
 ## Annotation Object
 
 When you call the `annotate` function, you get back an annotation object, which has the following methods:
@@ -104,7 +106,9 @@ When you call the `annotate` function, you get back an annotation object, which 
 Returns if the annotation is showing
 
 #### show()
-Draws the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation. 
+Draws the annotation. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-render the annotation, updating any size or location changes. 
+
+*Note: to reanimate the annotation, call `hide()` and then `show()` again.
 
 #### hide()
 Hides the annotation if showing. This is not animated. 
@@ -112,12 +116,24 @@ Hides the annotation if showing. This is not animated.
 #### remove()
 Unlinks the annotation from the element. 
 
+#### Updating styles
+All the properties in the configuration are also exposed in this object. e.g. if you'd like to change the color, you can do that after the annotation has been drawn.
+
+```javascript
+const e = document.querySelector('#myElement');
+const annotation = annotate(e, { type: 'underline', color: 'red' });
+annotation.show();
+annotation.color = 'green';
+```
+
+*Note: the type of the annotation cannot be changed. Create a new annotation for that.*
+
 ## Annotation Group Object
 
 When you call the `annotationGroup` function, you get back an annotation group object, which has the following methods:
 
 #### show()
-Draws all the annotations in order. If the annotation is set to animate (default), it will animate the drawing. If called again, it will re-draw the animation.
+Draws all the annotations in order. If the annotation is set to animate (default), it will animate the drawing. 
 
 #### hide()
 Hides all the annotations if showing. This is not animated.
