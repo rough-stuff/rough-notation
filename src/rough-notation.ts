@@ -77,6 +77,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
     if (this._state === 'unattached' && this._e.parentElement) {
       ensureKeyframes();
       const svg = this._svg = document.createElementNS(SVG_NS, 'svg');
+      svg.setAttribute('class', 'rough-annotation');
       const style = svg.style;
       style.position = 'absolute';
       style.top = '0';
