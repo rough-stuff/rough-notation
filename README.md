@@ -36,7 +36,15 @@ Create an `annotation` object by passing the element to annotate, and a config t
 Once you have the annotation object, you can call `show()` on it to show the annotation
 
 ```javascript
-import { annotate } from 'https://unpkg.com/rough-notation?module';  // on non-node based frameworks (vanilla javascript)
+import { annotate } from 'https://unpkg.com/rough-notation?module';  // on non Node based frameworks (vanilla javascript)
+
+const e = document.querySelector('#myElement');
+const annotation = annotate(e, { type: 'underline' });
+annotation.show();
+```
+
+```javascript
+import { annotate } from 'rough-notation';  // on Node based frameworks (React, Angular, etc)
 
 const e = document.querySelector('#myElement');
 const annotation = annotate(e, { type: 'underline' });
