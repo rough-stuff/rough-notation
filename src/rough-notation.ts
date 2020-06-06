@@ -18,7 +18,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig) {
     this._e = e;
-    this._config = config;
+    this._config = JSON.parse(JSON.stringify(config));
     this.attach();
   }
 
