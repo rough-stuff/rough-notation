@@ -140,7 +140,7 @@ Hides all the annotations if showing. This is not animated.
 
 ## Wrappers
 
-Rough Notation has wrappers for multiple libraries and frameworks:
+Others have created handy Rough Notation wrappers for multiple libraries and frameworks:
 
 -   [React Rough Notation](https://github.com/linkstrifer/react-rough-notation)
 -   [Svelte Rough Notation](https://github.com/dimfeld/svelte-rough-notation)
