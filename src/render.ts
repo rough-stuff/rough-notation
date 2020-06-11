@@ -170,7 +170,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     const pathElements: SVGPathElement[] = [];
     let totalLength = 0;
     const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || DEFAULT_ANIMATION_DURATION);
-    const initialDelay = (config.animationDelay === 0 ? 0 : (config.animationDelay || 0)) + (animationGroupDelay || 0);
 
     for (const d of pathStrings) {
       const path = document.createElementNS(SVG_NS, 'path');
@@ -193,7 +192,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
         const path = pathElements[i];
         const length = lengths[i];
         const duration = totalLength ? (totalDuration * (length / totalLength)) : 0;
-        const delay = initialDelay + durationOffset;
+        const delay = animationGroupDelay + durationOffset;
         const style = path.style;
         style.strokeDashoffset = `${length}`;
         style.strokeDasharray = `${length}`;

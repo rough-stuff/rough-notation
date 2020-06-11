@@ -15,12 +15,12 @@ export type RoughPadding = number | [number, number] | FullPadding;
 
 export interface RoughAnnotationConfig extends RoughAnnotationConfigBase {
   type: RoughAnnotationType;
+  multiline?: boolean;
 }
 
 export interface RoughAnnotationConfigBase {
   animate?: boolean; // defaults to true
   animationDuration?: number; // defaulst to 1000ms
-  animationDelay?: number; // default = 0
   color?: string; // defaults to currentColor
   strokeWidth?: number; // default based on type
   padding?: RoughPadding; // defaults to 5px
