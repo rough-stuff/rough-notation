@@ -23,6 +23,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig, getRect: () => DOMRect = defaultGetRect(e)) {
     this._e = e;
+    this._config = JSON.parse(JSON.stringify(config));
     this._config = config;
     this._getRect = getRect;
     this.attach();
