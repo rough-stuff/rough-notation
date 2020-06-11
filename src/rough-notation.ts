@@ -24,7 +24,6 @@ class RoughAnnotationImpl implements RoughAnnotation {
   constructor(e: HTMLElement, config: RoughAnnotationConfig, getRect: () => DOMRect = defaultGetRect(e)) {
     this._e = e;
     this._config = JSON.parse(JSON.stringify(config));
-    this._config = config;
     this._getRect = getRect;
     this.attach();
   }
@@ -224,7 +223,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private size(): Rect | null {
-    return this.sizeFor(this._getRect());      
+    return this.sizeFor(this._getRect());
   }
 
   private sizeFor(bounds: DOMRect | DOMRectReadOnly): Rect | null {
@@ -250,7 +249,7 @@ export function annotate(element: HTMLElement, config: RoughAnnotationConfig): R
 
 export function multiAnnotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotationGroup {
   const elements = [];
-  let clientRects = element.getClientRects();
+  const clientRects = element.getClientRects();
   for (let i = 0; i < clientRects.length; ++i) {
     const annotation = new RoughAnnotationImpl(element, config, () => clientRects.item(i)!);
     elements.push(annotation);
