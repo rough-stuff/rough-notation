@@ -5,8 +5,13 @@ import { randomSeed } from 'roughjs/bin/math';
 
 type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 
+function defaultGetRect(element: HTMLElement) {
+  return () => element.getBoundingClientRect();
+}
+
 class RoughAnnotationImpl implements RoughAnnotation {
   private _state: AnnotationState = 'unattached';
+  private _getRect: () => DOMRect;
   private _config: RoughAnnotationConfig;
   private _e: HTMLElement;
   private _svg?: SVGSVGElement;
@@ -16,9 +21,11 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private _seed = randomSeed();
   _animationGroupDelay = 0;
 
-  constructor(e: HTMLElement, config: RoughAnnotationConfig) {
+  constructor(e: HTMLElement, config: RoughAnnotationConfig, getRect: () => DOMRect = defaultGetRect(e)) {
     this._e = e;
     this._config = JSON.parse(JSON.stringify(config));
+    this._config = config;
+    this._getRect = getRect;
     this.attach();
   }
 
@@ -217,7 +224,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private size(): Rect | null {
-    return this.sizeFor(this._e.getBoundingClientRect());
+    return this.sizeFor(this._getRect());      
   }
 
   private sizeFor(bounds: DOMRect | DOMRectReadOnly): Rect | null {
@@ -239,6 +246,18 @@ class RoughAnnotationImpl implements RoughAnnotation {
 export function annotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotation {
   return new RoughAnnotationImpl(element, config);
 }
+
+
+export function multiAnnotate(element: HTMLElement, config: RoughAnnotationConfig): RoughAnnotationGroup {
+  const elements = [];
+  let clientRects = element.getClientRects();
+  for (let i = 0; i < clientRects.length; ++i) {
+    const annotation = new RoughAnnotationImpl(element, config, () => clientRects.item(i)!);
+    elements.push(annotation);
+  }
+  return annotationGroup(elements);
+}
+
 
 export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotationGroup {
   let delay = 0;
