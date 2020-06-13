@@ -140,16 +140,13 @@ class RoughAnnotationImpl implements RoughAnnotation {
     return false;
   }
 
-  private sameInteger(a: number, b: number): boolean {
-    return Math.round(a) === Math.round(b);
-  }
-
   private isSameRect(rect1: Rect, rect2: Rect): boolean {
+    const si = (a: number, b: number) => Math.round(a) === Math.round(b);
     return (
-      this.sameInteger(rect1.x, rect2.x) &&
-      this.sameInteger(rect1.y, rect2.y) &&
-      this.sameInteger(rect1.w, rect2.w) &&
-      this.sameInteger(rect1.h, rect2.h)
+      si(rect1.x, rect2.x) &&
+      si(rect1.y, rect2.y) &&
+      si(rect1.w, rect2.w) &&
+      si(rect1.h, rect2.h)
     );
   }
 
