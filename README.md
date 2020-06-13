@@ -146,3 +146,4 @@ Others have created handy Rough Notation wrappers for multiple libraries and fra
 -   [Svelte Rough Notation](https://github.com/dimfeld/svelte-rough-notation)
 -   [Vue Rough Notation](https://github.com/Leecason/vue-rough-notation)
 -   [Web Component Rough Notation](https://github.com/Matsuuu/vanilla-rough-notation)
+-   [Angular Rough Notation](https://github.com/mikyaj/ngx-rough-notation)
