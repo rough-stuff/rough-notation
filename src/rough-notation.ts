@@ -8,13 +8,15 @@ type AnnotationState = 'unattached' | 'not-showing' | 'showing';
 class RoughAnnotationImpl implements RoughAnnotation {
   private _state: AnnotationState = 'unattached';
   private _config: RoughAnnotationConfig;
-  private _e: HTMLElement;
-  private _svg?: SVGSVGElement;
   private _resizing = false;
   private _ro?: any; // ResizeObserver is not supported in typescript std lib yet
-  private _lastSize?: Rect;
   private _seed = randomSeed();
-  _animationGroupDelay = 0;
+
+  private _e: HTMLElement;
+  private _svg?: SVGSVGElement;
+  private _lastSizes: Rect[] = [];
+
+  _animationDelay = 0;
 
   constructor(e: HTMLElement, config: RoughAnnotationConfig) {
     this._e = e;
@@ -27,9 +29,6 @@ class RoughAnnotationImpl implements RoughAnnotation {
 
   get animationDuration() { return this._config.animationDuration; }
   set animationDuration(value) { this._config.animationDuration = value; }
-
-  get animationDelay() { return this._config.animationDelay; }
-  set animationDelay(value) { this._config.animationDelay = value; }
 
   get iterations() { return this._config.iterations; }
   set iterations(value) { this._config.iterations = value; }
@@ -64,8 +63,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
       setTimeout(() => {
         this._resizing = false;
         if (this._state === 'showing') {
-          const newSize = this.size();
-          if (newSize && this.hasRectChanged(newSize)) {
+          if (this.haveRectsChanged()) {
             this.show();
           }
         }
@@ -115,14 +113,7 @@ class RoughAnnotationImpl implements RoughAnnotation {
     if ((!this._ro) && ('ResizeObserver' in window)) {
       this._ro = new (window as any).ResizeObserver((entries: any) => {
         for (const entry of entries) {
-          let trigger = true;
           if (entry.contentRect) {
-            const newRect = this.sizeFor(entry.contentRect);
-            if (newRect && (!this.hasRectChanged(newRect))) {
-              trigger = false;
-            }
-          }
-          if (trigger) {
             this._resizeListener();
           }
         }
@@ -133,20 +124,30 @@ class RoughAnnotationImpl implements RoughAnnotation {
     }
   }
 
-  private sameInteger(a: number, b: number): boolean {
-    return Math.round(a) === Math.round(b);
+  private haveRectsChanged(): boolean {
+    if (this._lastSizes.length) {
+      const newRects = this.rects();
+      if (newRects.length === this._lastSizes.length) {
+        for (let i = 0; i < newRects.length; i++) {
+          if (!this.isSameRect(newRects[i], this._lastSizes[i])) {
+            return true;
+          }
+        }
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 
-  private hasRectChanged(rect: Rect): boolean {
-    if (this._lastSize && rect) {
-      return !(
-        this.sameInteger(rect.x, this._lastSize.x) &&
-        this.sameInteger(rect.y, this._lastSize.y) &&
-        this.sameInteger(rect.w, this._lastSize.w) &&
-        this.sameInteger(rect.h, this._lastSize.h)
-      );
-    }
-    return true;
+  private isSameRect(rect1: Rect, rect2: Rect): boolean {
+    const si = (a: number, b: number) => Math.round(a) === Math.round(b);
+    return (
+      si(rect1.x, rect2.x) &&
+      si(rect1.y, rect2.y) &&
+      si(rect1.w, rect2.w) &&
+      si(rect1.h, rect2.h)
+    );
   }
 
   isShowing(): boolean {
@@ -203,36 +204,50 @@ class RoughAnnotationImpl implements RoughAnnotation {
   }
 
   private render(svg: SVGSVGElement, ensureNoAnimation: boolean) {
-    const rect = this.size();
-    if (rect) {
-      let config = this._config;
-      if (ensureNoAnimation) {
-        config = JSON.parse(JSON.stringify(this._config));
-        config.animate = false;
-      }
-      renderAnnotation(svg, rect, config, this._animationGroupDelay, this._seed);
-      this._lastSize = rect;
-      this._state = 'showing';
+    let config = this._config;
+    if (ensureNoAnimation) {
+      config = JSON.parse(JSON.stringify(this._config));
+      config.animate = false;
     }
+    const rects = this.rects();
+    let totalWidth = 0;
+    rects.forEach((rect) => totalWidth += rect.w);
+    const totalDuration = (config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    let delay = 0;
+    for (let i = 0; i < rects.length; i++) {
+      const rect = rects[i];
+      config.animationDuration = totalDuration * (rect.w / totalWidth);
+      renderAnnotation(svg, rects[i], config, delay + this._animationDelay, this._seed);
+      delay += config.animationDuration;
+    }
+    this._lastSizes = rects;
+    this._state = 'showing';
   }
 
-  private size(): Rect | null {
-    return this.sizeFor(this._e.getBoundingClientRect());
-  }
-
-  private sizeFor(bounds: DOMRect | DOMRectReadOnly): Rect | null {
+  private rects(): Rect[] {
+    const ret: Rect[] = [];
     if (this._svg) {
-      const rect1 = this._svg.getBoundingClientRect();
-      const rect2 = bounds;
-
-      const x = (rect2.x || rect2.left) - (rect1.x || rect1.left);
-      const y = (rect2.y || rect2.top) - (rect1.y || rect1.top);
-      const w = rect2.width;
-      const h = rect2.height;
-
-      return { x, y, w, h };
+      if (this._config.multiline) {
+        const elementRects = this._e.getClientRects();
+        for (let i = 0; i < elementRects.length; i++) {
+          ret.push(this.svgRect(this._svg, elementRects[i]));
+        }
+      } else {
+        ret.push(this.svgRect(this._svg, this._e.getBoundingClientRect()));
+      }
     }
-    return null;
+    return ret;
+  }
+
+  private svgRect(svg: SVGSVGElement, bounds: DOMRect | DOMRectReadOnly): Rect {
+    const rect1 = svg.getBoundingClientRect();
+    const rect2 = bounds;
+    return {
+      x: (rect2.x || rect2.left) - (rect1.x || rect1.left),
+      y: (rect2.y || rect2.top) - (rect1.y || rect1.top),
+      w: rect2.width,
+      h: rect2.height
+    };
   }
 }
 
@@ -244,7 +259,7 @@ export function annotationGroup(annotations: RoughAnnotation[]): RoughAnnotation
   let delay = 0;
   for (const a of annotations) {
     const ai = a as RoughAnnotationImpl;
-    ai._animationGroupDelay = delay;
+    ai._animationDelay = delay;
     const duration = ai.animationDuration === 0 ? 0 : (ai.animationDuration || DEFAULT_ANIMATION_DURATION);
     delay += duration;
   }
