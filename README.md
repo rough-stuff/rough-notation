@@ -95,6 +95,9 @@ Width of the annotation strokes. Default value is `1`.
 Padding between the element and roughly where the annotation is drawn. Default value is `5` (in pixels).
 If you wish to specify different `top`, `left`, `right`, `bottom` paddings, you can set the value to an array akin to CSS style padidng `[top, right, bottom, left]` or just `[top & bottom, left & right]`.
 
+#### multiline
+This prooperty only applies to inline text. To annotate multiline text (each line separately), set this property to `true`. 
+
 #### iterations
 By default annotations are drawn in two iterations, e.g. when underlining, drawing from left to right and then back from right to left. Setting this property can let you configure the number of iterations. 
 
