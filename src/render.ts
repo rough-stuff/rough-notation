@@ -2,43 +2,30 @@ import { Rect, RoughAnnotationConfig, SVG_NS, DEFAULT_ANIMATION_DURATION, FullPa
 import { ResolvedOptions, OpSet } from 'roughjs/bin/core';
 import { line, rectangle, ellipse } from 'roughjs/bin/renderer';
 
-const defaultOptions: ResolvedOptions = {
-  maxRandomnessOffset: 2,
-  roughness: 1.5,
-  bowing: 1,
-  stroke: '#000',
-  strokeWidth: 1.5,
-  curveTightness: 0,
-  curveFitting: 0.95,
-  curveStepCount: 9,
-  fillStyle: 'hachure',
-  fillWeight: -1,
-  hachureAngle: -41,
-  hachureGap: -1,
-  dashOffset: -1,
-  dashGap: -1,
-  zigzagOffset: -1,
-  seed: 0,
-  combineNestedSvgPaths: false,
-  disableMultiStroke: false,
-  disableMultiStrokeFill: false
-};
-
 type RoughOptionsType = 'highlight' | 'single' | 'double';
 
 function getOptions(type: RoughOptionsType, seed: number): ResolvedOptions {
-  const o = JSON.parse(JSON.stringify(defaultOptions)) as ResolvedOptions;
-  switch (type) {
-    case 'highlight':
-      o.roughness = 3;
-      o.disableMultiStroke = true;
-      break;
-    case 'single':
-      o.disableMultiStroke = true;
-      break;
-  }
-  o.seed = seed;
-  return o;
+  return {
+    maxRandomnessOffset: 2,
+    roughness: type === 'highlight' ? 3 : 1.5,
+    bowing: 1,
+    stroke: '#000',
+    strokeWidth: 1.5,
+    curveTightness: 0,
+    curveFitting: 0.95,
+    curveStepCount: 9,
+    fillStyle: 'hachure',
+    fillWeight: -1,
+    hachureAngle: -41,
+    hachureGap: -1,
+    dashOffset: -1,
+    dashGap: -1,
+    zigzagOffset: -1,
+    combineNestedSvgPaths: false,
+    disableMultiStroke: type !== 'double',
+    disableMultiStrokeFill: false,
+    seed
+  };
 }
 
 function parsePadding(config: RoughAnnotationConfig): FullPadding {
@@ -170,13 +157,14 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     const pathElements: SVGPathElement[] = [];
     let totalLength = 0;
     const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || DEFAULT_ANIMATION_DURATION);
+    const setAttr = (p: SVGPathElement, an: string, av: string) => p.setAttribute(an, av);
 
     for (const d of pathStrings) {
       const path = document.createElementNS(SVG_NS, 'path');
-      path.setAttribute('d', d);
-      path.setAttribute('fill', 'none');
-      path.setAttribute('stroke', config.color || 'currentColor');
-      path.setAttribute('stroke-width', `${strokeWidth}`);
+      setAttr(path, 'd', d);
+      setAttr(path, 'fill', 'none');
+      setAttr(path, 'stroke', config.color || 'currentColor');
+      setAttr(path, 'stroke-width', `${strokeWidth}`);
       if (animate) {
         const length = path.getTotalLength();
         lengths.push(length);
