@@ -242,13 +242,12 @@ class RoughAnnotationImpl implements RoughAnnotation {
   private svgRect(svg: SVGSVGElement, bounds: DOMRect | DOMRectReadOnly): Rect {
     const rect1 = svg.getBoundingClientRect();
     const rect2 = bounds;
-
-    const x = (rect2.x || rect2.left) - (rect1.x || rect1.left);
-    const y = (rect2.y || rect2.top) - (rect1.y || rect1.top);
-    const w = rect2.width;
-    const h = rect2.height;
-
-    return { x, y, w, h };
+    return {
+      x: (rect2.x || rect2.left) - (rect1.x || rect1.left),
+      y: (rect2.y || rect2.top) - (rect1.y || rect1.top),
+      w: rect2.width,
+      h: rect2.height
+    };
   }
 }
 
