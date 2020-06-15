@@ -67,12 +67,12 @@ When you create an annotation object, you pass in a config. The config only has 
 #### type
 This is a mandatory field. It sets the annotation style. Following are the list of supported annotation types:
 
-* __underline__: Create a sketchy underline below an element.
+* __underline__: This style creates a sketchy underline below an element.
 * __box__: This style draws a box around the element.
-* __circle__: Draw a circle around the element.
-* __highlight__: Creates a highlight effect as if maked by a highlighter.
-* __strike-through__: This style draws a box around the element.
-* __crossed-off__: This style draws a box around the element.
+* __circle__: This style draws a circle around the element.
+* __highlight__: This style creates a highlight effect as if masked by a highlighter.
+* __strike-through__: This style draws horizontal lines through the element.
+* __crossed-off__: This style draws an 'X' across the element.
 
 #### animate
 Boolean property to turn on/off animation when annotating. Default value is `true`.
