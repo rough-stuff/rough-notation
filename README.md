@@ -60,6 +60,13 @@ const ag = annotationGroup([a3, a1, a2]);
 ag.show();
 ```
 
+## Live examples
+I have created some basic examples on Glitch for you to play with. 
+
+[Basic demo](https://glitch.com/~basic-rough-notation)
+
+[Annotation group demo](https://glitch.com/~annotation-group)
+
 ## Configuring the Annotation
 
 When you create an annotation object, you pass in a config. The config only has one mandatory field, which is the `type` of the annotation. But you can configure the annotation in many ways. 
