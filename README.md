@@ -37,6 +37,8 @@ Once you have the annotation object, you can call `show()` on it to show the ann
 
 ```javascript
 import { annotate } from 'rough-notation';
+// Or using unpkg
+// import { annotate } from 'https://unpkg.com/rough-notation?module';
 
 const e = document.querySelector('#myElement');
 const annotation = annotate(e, { type: 'underline' });
