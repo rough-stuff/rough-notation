@@ -216,9 +216,9 @@ class RoughAnnotationImpl implements RoughAnnotation {
     let delay = 0;
     for (let i = 0; i < rects.length; i++) {
       const rect = rects[i];
-      config.animationDuration = totalDuration * (rect.w / totalWidth);
-      renderAnnotation(svg, rects[i], config, delay + this._animationDelay, this._seed);
-      delay += config.animationDuration;
+      const ad = totalDuration * (rect.w / totalWidth);
+      renderAnnotation(svg, rects[i], config, delay + this._animationDelay, ad, this._seed);
+      delay += ad;
     }
     this._lastSizes = rects;
     this._state = 'showing';

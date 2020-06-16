@@ -1,4 +1,4 @@
-import { Rect, RoughAnnotationConfig, SVG_NS, DEFAULT_ANIMATION_DURATION, FullPadding } from './model.js';
+import { Rect, RoughAnnotationConfig, SVG_NS, FullPadding } from './model.js';
 import { ResolvedOptions, OpSet } from 'roughjs/bin/core';
 import { line, rectangle, ellipse } from 'roughjs/bin/renderer';
 
@@ -54,7 +54,7 @@ function parsePadding(config: RoughAnnotationConfig): FullPadding {
   return [5, 5, 5, 5];
 }
 
-export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number, seed: number) {
+export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAnnotationConfig, animationGroupDelay: number, animationDuration: number, seed: number) {
   const opList: OpSet[] = [];
   let strokeWidth = config.strokeWidth || 2;
   const padding = parsePadding(config);
@@ -156,7 +156,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     const lengths: number[] = [];
     const pathElements: SVGPathElement[] = [];
     let totalLength = 0;
-    const totalDuration = config.animationDuration === 0 ? 0 : (config.animationDuration || DEFAULT_ANIMATION_DURATION);
     const setAttr = (p: SVGPathElement, an: string, av: string) => p.setAttribute(an, av);
 
     for (const d of pathStrings) {
@@ -179,7 +178,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       for (let i = 0; i < pathElements.length; i++) {
         const path = pathElements[i];
         const length = lengths[i];
-        const duration = totalLength ? (totalDuration * (length / totalLength)) : 0;
+        const duration = totalLength ? (animationDuration * (length / totalLength)) : 0;
         const delay = animationGroupDelay + durationOffset;
         const style = path.style;
         style.strokeDashoffset = `${length}`;
