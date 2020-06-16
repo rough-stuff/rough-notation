@@ -79,7 +79,7 @@ This is a mandatory field. It sets the annotation style. Following are the list 
 * __underline__: This style creates a sketchy underline below an element.
 * __box__: This style draws a box around the element.
 * __circle__: This style draws a circle around the element.
-* __highlight__: This style creates a highlight effect as if masked by a highlighter.
+* __highlight__: This style creates a highlight effect as if marked by a highlighter.
 * __strike-through__: This style draws horizontal lines through the element.
 * __crossed-off__: This style draws an 'X' across the element.
 
