@@ -63,7 +63,7 @@ ag.show();
 ```
 
 ## Live examples
-I have created some basic examples on Glitch for you to play with. 
+I have created some basic examples on Glitch for you to remix and play with the code:
 
 [Basic demo](https://glitch.com/~basic-rough-notation)
 
