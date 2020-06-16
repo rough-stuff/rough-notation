@@ -4,7 +4,7 @@
 
 A small JavaScript library to create and animate annotations on a web page.
 
-Rough Notation uses [RoughJS](https://roughjs.com) to create a hand-drawn look and feel. Elements can be annotated in a number of different styles. Animation duration and delay can be configured, or just turned off.
+Rough Notation uses [RoughJS](https://roughjs.com) to create a hand-drawn look and feel. Elements can be annotated in a number of different styles. Animation duration can be configured, or just turned off.
 
 Rough Notation is 3.67kb in size when gzipped.
 
@@ -88,11 +88,6 @@ Boolean property to turn on/off animation when annotating. Default value is `tru
 
 #### animationDuration
 Duration of the animation in milliseconds. Default is `800ms`.
-
-
-#### animationDelay
-Delay in animation in milliseconds. Default is `0ms`.
-
 
 #### color
 String value representing the color of the annotation sketch. Default value is `currentColor`.
