@@ -1,6 +1,7 @@
-import { Rect, RoughAnnotationConfig, SVG_NS, FullPadding } from './model.js';
+import { Rect, RoughAnnotationConfig, SVG_NS, FullPadding, BracketType } from './model.js';
 import { ResolvedOptions, OpSet } from 'roughjs/bin/core';
-import { line, rectangle, ellipse } from 'roughjs/bin/renderer';
+import { line, rectangle, ellipse, linearPath } from 'roughjs/bin/renderer';
+import { Point } from 'roughjs/bin/geometry';
 
 type RoughOptionsType = 'highlight' | 'single' | 'double';
 
@@ -94,6 +95,55 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const height = rect.h + (padding[0] + padding[2]);
       for (let i = 0; i < iterations; i++) {
         opList.push(rectangle(x, y, width, height, o));
+      }
+      break;
+    }
+    case 'bracket': {
+      const o = getOptions('single', seed);
+      const brackets: BracketType[] = Array.isArray(config.brackets) ? config.brackets : (config.brackets ? [config.brackets] : ['right']);
+      const lx = rect.x - padding[3] * 2;
+      const rx = rect.x + rect.w + padding[1] * 2;
+      const ty = rect.y - padding[0] * 2;
+      const by = rect.y + rect.h + padding[2] * 2;
+      for (const br of brackets) {
+        let points: Point[];
+        switch (br) {
+          case 'bottom':
+            points = [
+              [lx, rect.y + rect.h],
+              [lx, by],
+              [rx, by],
+              [rx, rect.y + rect.h]
+            ];
+            break;
+          case 'top':
+            points = [
+              [lx, rect.y],
+              [lx, ty],
+              [rx, ty],
+              [rx, rect.y]
+            ];
+            break;
+          case 'left':
+            points = [
+              [rect.x, ty],
+              [lx, ty],
+              [lx, by],
+              [rect.x, by]
+            ];
+            break;
+          case 'right':
+            points = [
+              [rect.x + rect.w, ty],
+              [rx, ty],
+              [rx, by],
+              [rect.x + rect.w, by]
+            ];
+            break;
+        }
+        if (points) {
+          opList.push(linearPath(points, false, o));
+        }
       }
       break;
     }
