@@ -64,19 +64,9 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   const o = getOptions('single', seed);
 
   switch (config.type) {
-    case 'underline': {
-      const y = rect.y + rect.h + padding[2];
-      for (let i = 0; i < iterations; i++) {
-        if (i % 2) {
-          opList.push(line(rect.x + rect.w, y, rect.x, y, o));
-        } else {
-          opList.push(line(rect.x, y, rect.x + rect.w, y, o));
-        }
-      }
-      break;
-    }
+    case 'underline':
     case 'strike-through': {
-      const y = rect.y + (rect.h / 2);
+      const y = rect.y + (config.type === 'underline' ? (rect.h + padding[2]) : (rect.h / 2));
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
           opList.push(line(rect.x + rect.w, y, rect.x, y, o));
