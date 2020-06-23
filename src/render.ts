@@ -61,10 +61,10 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   const padding = parsePadding(config);
   const animate = (config.animate === undefined) ? true : (!!config.animate);
   const iterations = config.iterations || 2;
+  const o = getOptions('single', seed);
 
   switch (config.type) {
     case 'underline': {
-      const o = getOptions('single', seed);
       const y = rect.y + rect.h + padding[2];
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
@@ -76,7 +76,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'strike-through': {
-      const o = getOptions('single', seed);
       const y = rect.y + (rect.h / 2);
       for (let i = 0; i < iterations; i++) {
         if (i % 2) {
@@ -88,7 +87,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'box': {
-      const o = getOptions('single', seed);
       const x = rect.x - padding[3];
       const y = rect.y - padding[0];
       const width = rect.w + (padding[1] + padding[3]);
@@ -99,7 +97,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'bracket': {
-      const o = getOptions('single', seed);
       const brackets: BracketType[] = Array.isArray(config.brackets) ? config.brackets : (config.brackets ? [config.brackets] : ['right']);
       const lx = rect.x - padding[3] * 2;
       const rx = rect.x + rect.w + padding[1] * 2;
@@ -148,7 +145,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'crossed-off': {
-      const o = getOptions('single', seed);
       const x = rect.x;
       const y = rect.y;
       const x2 = x + rect.w;
@@ -170,7 +166,6 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       break;
     }
     case 'circle': {
-      const singleO = getOptions('single', seed);
       const doubleO = getOptions('double', seed);
       const width = rect.w + (padding[1] + padding[3]);
       const height = rect.h + (padding[0] + padding[2]);
@@ -182,7 +177,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
         opList.push(ellipse(x, y, width, height, doubleO));
       }
       for (let i = 0; i < singleItr; i++) {
-        opList.push(ellipse(x, y, width, height, singleO));
+        opList.push(ellipse(x, y, width, height, o));
       }
       break;
     }
