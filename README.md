@@ -82,6 +82,7 @@ This is a mandatory field. It sets the annotation style. Following are the list 
 * __highlight__: This style creates a highlight effect as if marked by a highlighter.
 * __strike-through__: This style draws horizontal lines through the element.
 * __crossed-off__: This style draws an 'X' across the element.
+* __bracket__: This style draws a bracket around an element, usually a paragraph of text. By default on the right side, but can be configured to any or all of *left, right, top, bottom*.
 
 #### animate
 Boolean property to turn on/off animation when annotating. Default value is `true`.
@@ -104,6 +105,9 @@ This property only applies to inline text. To annotate multiline text (each line
 
 #### iterations
 By default annotations are drawn in two iterations, e.g. when underlining, drawing from left to right and then back from right to left. Setting this property can let you configure the number of iterations. 
+
+#### brackets
+Value could be a string or an array of strings, each string being one of these values: **left, right, top, bottom**. When drawing a bracket, this configures which side(s) of the element to bracket. Default value is `right`.
 
 ## Annotation Object
 
