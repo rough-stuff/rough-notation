@@ -9,9 +9,10 @@ export interface Rect {
   h: number;
 }
 
-export type RoughAnnotationType = 'underline' | 'box' | 'circle' | 'highlight' | 'strike-through' | 'crossed-off';
+export type RoughAnnotationType = 'underline' | 'box' | 'circle' | 'highlight' | 'strike-through' | 'crossed-off' | 'bracket';
 export type FullPadding = [number, number, number, number];
 export type RoughPadding = number | [number, number] | FullPadding;
+export type BracketType = 'left' | 'right' | 'top' | 'bottom';
 
 export interface RoughAnnotationConfig extends RoughAnnotationConfigBase {
   type: RoughAnnotationType;
@@ -25,6 +26,7 @@ export interface RoughAnnotationConfigBase {
   strokeWidth?: number; // default based on type
   padding?: RoughPadding; // defaults to 5px
   iterations?: number; // defaults to 2
+  brackets?: BracketType | BracketType[]; // defaults to 'right'
 }
 
 export interface RoughAnnotation extends RoughAnnotationConfigBase {
