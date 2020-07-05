@@ -27,7 +27,7 @@ Or load the ES module directly
 Or load the IIFE version which created a `RoughNotation` object in your scope.
 
 ```html
-<script type="module" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
 ```
 
 ## Usage
