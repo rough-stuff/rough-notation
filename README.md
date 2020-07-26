@@ -98,7 +98,7 @@ Width of the annotation strokes. Default value is `1`.
 
 #### padding
 Padding between the element and roughly where the annotation is drawn. Default value is `5` (in pixels).
-If you wish to specify different `top`, `left`, `right`, `bottom` paddings, you can set the value to an array akin to CSS style padidng `[top, right, bottom, left]` or just `[top & bottom, left & right]`.
+If you wish to specify different `top`, `left`, `right`, `bottom` paddings, you can set the value to an array akin to CSS style padding `[top, right, bottom, left]` or just `[top & bottom, left & right]`.
 
 #### multiline
 This property only applies to inline text. To annotate multiline text (each line separately), set this property to `true`. 
