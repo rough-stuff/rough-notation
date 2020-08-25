@@ -61,12 +61,13 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
   const padding = parsePadding(config);
   const animate = (config.animate === undefined) ? true : (!!config.animate);
   const iterations = config.iterations || 2;
+  const rtl = config.rtl ? 1 : 0;
   const o = getOptions('single', seed);
 
   switch (config.type) {
     case 'underline': {
       const y = rect.y + rect.h + padding[2];
-      for (let i = 0; i < iterations; i++) {
+      for (let i = rtl; i < iterations + rtl; i++) {
         if (i % 2) {
           opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
@@ -77,7 +78,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
     }
     case 'strike-through': {
       const y = rect.y + (rect.h / 2);
-      for (let i = 0; i < iterations; i++) {
+      for (let i = rtl; i < iterations + rtl; i++) {
         if (i % 2) {
           opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
@@ -149,14 +150,14 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const y = rect.y;
       const x2 = x + rect.w;
       const y2 = y + rect.h;
-      for (let i = 0; i < iterations; i++) {
+      for (let i = rtl; i < iterations + rtl; i++) {
         if (i % 2) {
           opList.push(line(x2, y2, x, y, o));
         } else {
           opList.push(line(x, y, x2, y2, o));
         }
       }
-      for (let i = 0; i < iterations; i++) {
+      for (let i = rtl; i < iterations + rtl; i++) {
         if (i % 2) {
           opList.push(line(x, y2, x2, y, o));
         } else {
@@ -185,7 +186,7 @@ export function renderAnnotation(svg: SVGSVGElement, rect: Rect, config: RoughAn
       const o = getOptions('highlight', seed);
       strokeWidth = rect.h * 0.95;
       const y = rect.y + (rect.h / 2);
-      for (let i = 0; i < iterations; i++) {
+      for (let i = rtl; i < iterations + rtl; i++) {
         if (i % 2) {
           opList.push(line(rect.x + rect.w, y, rect.x, y, o));
         } else {
