@@ -17,6 +17,7 @@ export type BracketType = 'left' | 'right' | 'top' | 'bottom';
 export interface RoughAnnotationConfig extends RoughAnnotationConfigBase {
   type: RoughAnnotationType;
   multiline?: boolean;
+  rtl?: boolean;
 }
 
 export interface RoughAnnotationConfigBase {

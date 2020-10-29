@@ -109,6 +109,9 @@ By default annotations are drawn in two iterations, e.g. when underlining, drawi
 #### brackets
 Value could be a string or an array of strings, each string being one of these values: **left, right, top, bottom**. When drawing a bracket, this configures which side(s) of the element to bracket. Default value is `right`.
 
+#### rtl
+By default annotations are drawn from left to right. To start with right to left, set this property to `true`. 
+
 ## Annotation Object
 
 When you call the `annotate` function, you get back an annotation object, which has the following methods:
