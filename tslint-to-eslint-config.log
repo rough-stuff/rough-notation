@@ -1,0 +1,10 @@
+3 ESLint rules behave differently from their TSLint counterparts:
+  * brace-style:
+    - ESLint's brace-style will check all tokens.
+  * eqeqeq:
+    - Option "smart" allows for comparing two literal values, evaluating the value of typeof and null comparisons.
+  * no-underscore-dangle:
+    - Leading or trailing underscores (_) on identifiers will now be forbidden.
+
+1 rule is not known by tslint-to-eslint-config to have an ESLint equivalent:
+  * tslint-to-eslint-config does not know the ESLint equivalent for TSLint's "whitespace".
