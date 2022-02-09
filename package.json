@@ -7,7 +7,7 @@
   "types": "lib/rough-notation.d.ts",
   "scripts": {
     "build": "rm -rf lib && tsc && rollup -c",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint --fix --config .eslintrc.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
