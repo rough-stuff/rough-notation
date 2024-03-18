@@ -161,6 +161,7 @@ Others have created handy Rough Notation wrappers for multiple libraries and fra
 -   [Vue Rough Notation](https://github.com/Leecason/vue-rough-notation)
 -   [Web Component Rough Notation](https://github.com/Matsuuu/vanilla-rough-notation)
 -   [Angular Rough Notation](https://github.com/mikyaj/ngx-rough-notation)
+-   [Purescript Rough Notation](https://pursuit.purescript.org/packages/purescript-rough-notation/)
 
 ## Contributors
 
